@@ -9,6 +9,11 @@ export const useDraggablePreview = ({ src, width, height, borderColor }) => {
   previewImage.style.position = "absolute";
   previewImage.style.border = "3px solid white";
   previewImage.style.objectFit = "cover";
+  previewImage.style.pointerEvents = "none";
+  //prevent appended element from showing ( needed for custom drag preview)
+  previewImage.style.top = "-1000px";
+  previewImage.style.left = "-1000px";
+  previewImage.id = "drag-preview";
   document.body.appendChild(previewImage);
 
   return previewImage;

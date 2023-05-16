@@ -49,29 +49,27 @@ export default function PrintPage({ data }) {
   };
 
   return (
-    <>
-      <Wrapper>
-        {Object.values(data).map((entry, i) => {
-          return (
-            <PrintWrapper key={i}>
-              <Header>
-                <Title>{entry.title}</Title>
-                <Actions />
-              </Header>
-              <PageLayout>
-                <Draggable
-                  images={entry.images}
-                  onDragStart={(index, pageId) => {
-                    setDraggedSrcIndex([pageId, index]);
-                  }}
-                  onDrop={swapImages}
-                  pageId={i}
-                />
-              </PageLayout>
-            </PrintWrapper>
-          );
-        })}
-      </Wrapper>
-    </>
+    <Wrapper>
+      {Object.values(photoBookData).map((entry, i) => {
+        return (
+          <PrintWrapper key={i}>
+            <Header>
+              <Title>{entry.title}</Title>
+              <Actions />
+            </Header>
+            <PageLayout>
+              <Draggable
+                images={entry.images}
+                onDragStart={(index, pageId) => {
+                  setDraggedSrcIndex([pageId, index]);
+                }}
+                onDrop={swapImages}
+                pageId={i}
+              />
+            </PageLayout>
+          </PrintWrapper>
+        );
+      })}
+    </Wrapper>
   );
 }

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDraggablePreview } from "../DraggablePreview/DraggablePreview";
 
-const sidebar = {
+const circleVariants = {
   open: (height = 10) => ({
     clipPath: `circle(${height * 2 + 200}px at 50% 50%)`,
     transition: {
@@ -86,6 +86,7 @@ export const Draggable = ({ images, onDrop, onDragStart, pageId }) => {
   const handleDrop = async (event, index) => {
     event.preventDefault();
     event.target.classList.remove("drag-over");
+    document.getElementById("drag-preview").remove();
     setShowDropAnimation(true);
     onDrop(index, pageId);
   };
@@ -105,7 +106,7 @@ export const Draggable = ({ images, onDrop, onDragStart, pageId }) => {
                 src={image}
                 initial="closed"
                 animate="open"
-                variants={sidebar}
+                variants={circleVariants}
                 onAnimationComplete={() => {
                   setShowDropAnimation(false);
                 }}
