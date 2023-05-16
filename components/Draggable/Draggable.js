@@ -32,10 +32,10 @@ const PrintPhoto = styled(motion.div)`
     max-width: 100%;
     height: 100%;
     &.drag-over {
-      opacity: 0.5; /* Modify the opacity for the drag-over item */
+      opacity: 0.5;
     }
     &.drag-start {
-      opacity: 0.5; /* Modify the opacity for the drag-over item */
+      opacity: 0.5;
     }
   }
 `;
@@ -58,6 +58,7 @@ export const Draggable = ({ images, onDrop, onDragStart, pageId }) => {
       src: images[index],
       width: 100,
       height: 100,
+      borderColor: "white",
     });
     // this can be refactored to use react node, this is limited to Image
     event.dataTransfer.setDragImage(previewImage, 50, 50);

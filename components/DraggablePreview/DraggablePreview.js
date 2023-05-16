@@ -7,7 +7,7 @@ export const useDraggablePreview = ({ src, width, height, borderColor }) => {
   previewImage.style.maxWidth = "100%";
   previewImage.style.maxHeight = "100%";
   previewImage.style.position = "absolute";
-  previewImage.style.border = "3px solid white";
+  previewImage.style.border = `3px solid ${borderColor}`;
   previewImage.style.objectFit = "cover";
   previewImage.style.pointerEvents = "none";
   //prevent appended element from showing ( needed for custom drag preview)
