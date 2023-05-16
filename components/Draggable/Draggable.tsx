@@ -40,7 +40,7 @@ const PrintPhoto = styled(motion.div)`
   }
 `;
 
-const Circle = styled(motion.div)`
+const Circle = styled(motion.div)<{ src: string }>`
   background: url(${(props) => props.src});
   background-size: cover;
   position: absolute;
@@ -50,51 +50,69 @@ const Circle = styled(motion.div)`
   height: 100%;
 `;
 
-export const Draggable = ({ images, onDrop, onDragStart, pageId }) => {
+type DraggableProps = {
+  images: string[];
+  onDrop: (index: number, pageIndex: number) => void;
+  onDragStart: (index: number, pageIndex: number) => void;
+  pageIndex: number;
+};
+
+export const Draggable = ({
+  images,
+  onDrop,
+  onDragStart,
+  pageIndex,
+}: DraggableProps) => {
   const [showDropAnimation, setShowDropAnimation] = useState(false);
 
-  const handleDragStart = (event, index) => {
+  const handleDragStart = (
+    event: React.DragEvent<HTMLImageElement>,
+    index: number
+  ) => {
     const previewImage = useDraggablePreview({
       src: images[index],
       width: 100,
       height: 100,
       borderColor: "white",
     });
-    // this can be refactored to use react node, this is limited to Image
+    // Using the html d&d api limited to a Image element rather then react component
     event.dataTransfer.setDragImage(previewImage, 50, 50);
 
-    event.target.classList.add("drag-start");
-    onDragStart(index, pageId);
+    event.currentTarget.classList.add("drag-start");
+    onDragStart(index, pageIndex);
   };
 
-  const handleDragOver = (event) => {
+  const handleDragOver = (event: React.DragEvent<HTMLImageElement>) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   };
 
-  const handleDragEnter = (event) => {
+  const handleDragEnter = (event: React.DragEvent<HTMLImageElement>) => {
     event.preventDefault();
     console.log("ENTER");
-    console.log(event.target);
-    event.target.classList.add("drag-over");
+    console.log(event.currentTarget);
+    event.currentTarget.classList.add("drag-over");
   };
 
-  const handleDragLeave = (event) => {
+  const handleDragLeave = (event: React.DragEvent<HTMLImageElement>) => {
     event.preventDefault();
-    event.target.classList.remove("drag-over");
+    event.currentTarget.classList.remove("drag-over");
   };
 
-  const handleDrop = async (event, index) => {
+  const handleDrop = async (
+    event: React.DragEvent<HTMLImageElement>,
+    index: number
+  ) => {
     event.preventDefault();
-    event.target.classList.remove("drag-over");
-    document.getElementById("drag-preview").remove();
+    event.currentTarget.classList.remove("drag-over");
+    document.getElementById("drag-preview")?.remove();
     setShowDropAnimation(true);
-    onDrop(index, pageId);
+    onDrop(index, pageIndex);
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: React.DragEvent<HTMLImageElement>) => {
     event.preventDefault();
-    event.target.classList.remove("drag-start");
+    event.currentTarget.classList.remove("drag-start");
   };
 
   return (
@@ -116,17 +134,14 @@ export const Draggable = ({ images, onDrop, onDragStart, pageId }) => {
           </AnimatePresence>
           <motion.img
             src={image}
-            alt={`Page ${pageId} Image ${index} `}
+            alt={`Page ${pageIndex} Image ${index} `}
             draggable
-            onDragStart={(event) => handleDragStart(event, index)}
+            onDragStart={(event) => handleDragStart(event as any, index)}
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
-            onDragEnd={handleDragEnd}
+            onDragEnd={handleDragEnd as any}
             onDragLeave={handleDragLeave}
             onDrop={(event) => handleDrop(event, index)}
-            onAnimationComplete={() => {
-              setIsExpanded(false);
-            }}
             transition={{ duration: 0.5 }}
           />
         </PrintPhoto>
