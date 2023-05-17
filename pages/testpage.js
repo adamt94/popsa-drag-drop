@@ -42,6 +42,7 @@ export default function Testpage() {
             title: "Front Print",
             images: [
               "https://videodelivery.net/775b1b7196b2c126b8dc343416211fdb/thumbnails/thumbnail.jpg?height=1080",
+              "placeholder",
             ],
           },
           {

@@ -1,96 +1,20 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import { swapImagePositions } from "../../utils/swapImagePositions";
 import Draggable from "../Draggable/Draggable";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import ActionBar from "../ActionBar/ActionBar";
-
-const Wrapper = styled.div`
-  width: 600px;
-  margin: auto;
-  color: #585858;
-`;
-
-const PrintWrapper = styled.div``;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Title = styled.div`
-  font-style: normal;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 20px;
-`;
-
-const PageLayout = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  background: #2778a5;
-  border-radius: 8px;
-  padding: 20px;
-  margin: 17px 0 42px;
-  justify-content: space-between;
-
-  img {
-    max-width: 100%;
-    height: 100%;
-    transition: opacity 0.5s ease-in-out;
-    &.drag-over {
-      opacity: 0.5;
-    }
-    &.drag-start {
-      opacity: 0.5;
-    }
-  }
-`;
-const PrintPhoto = styled(motion.div)`
-  position: relative;
-  width: calc(50% - 10px);
-  div {
-    &.drag-over {
-      opacity: 0.5;
-    }
-    &.drag-start {
-      opacity: 0.5;
-    }
-  }
-`;
-const Photo = styled.div`
-  img {
-    max-width: 100%;
-    height: 100%;
-    &.drag-over {
-      opacity: 0.5;
-    }
-    &.drag-start {
-      opacity: 0.5;
-    }
-  }
-`;
-
-const Circle = styled(motion.div)<{ src: string }>`
-  background: url(${(props) => props.src});
-  background-size: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-`;
-
-const FadeOutImage = styled(motion.div)<{ src: string }>`
-  background: url(${(props) => props.src});
-  background-size: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-`;
+import {
+  Wrapper,
+  PrintWrapper,
+  Header,
+  Title,
+  PageLayout,
+  PrintPhoto,
+  OnDropAnimation,
+  Photo,
+  FadeOutImage,
+  Placeholder,
+} from "./styles";
 
 export type PrintablePageData = {
   title: string;
@@ -100,7 +24,7 @@ type PrintablePageProps = {
   data: PrintablePageData[];
 };
 
-const circleVariants = {
+const onDropAnimatinVariants = {
   open: (height = 10) => ({
     clipPath: `circle(${height * 2 + 200}px at 50% 50%)`,
     transition: {
@@ -154,21 +78,25 @@ export default function PrintablePage({ data }: PrintablePageProps) {
                       <Draggable
                         draggableItemPreview={image}
                         onDragStart={(element) => {
-                          setSrc(element.querySelector("img")?.src || "");
+                          setSrc(
+                            element.querySelector("img")?.src || "placeholder"
+                          );
                         }}
                         onDragEnd={(element) => {
-                          setDest(element.querySelector("img")?.src || "");
+                          setDest(
+                            element.querySelector("img")?.src || "placeholder"
+                          );
                           setShowDropAnimation(true);
                         }}
                       >
                         <>
                           <AnimatePresence>
                             {showDropAnimation && dest == image && (
-                              <Circle
+                              <OnDropAnimation
                                 src={src || ""}
                                 initial="closed"
                                 animate="open"
-                                variants={circleVariants}
+                                variants={onDropAnimatinVariants}
                                 onAnimationComplete={() => {
                                   setShowDropAnimation(false);
                                   swapImages(src || "", dest || "");
@@ -184,10 +112,17 @@ export default function PrintablePage({ data }: PrintablePageProps) {
                                   variants={fadeOutVariant}
                                   initial="initial"
                                   animate="animate"
-                                />
+                                >
+                                  <img src={dest || ""} />
+                                </FadeOutImage>
                               )}
                             </AnimatePresence>
-                            <img src={image} alt={`photo image ${i + j}`} />
+
+                            {image === "placeholder" ? (
+                              <Placeholder />
+                            ) : (
+                              <img src={image} alt={`photo image ${i + j}`} />
+                            )}
                           </Photo>
                         </>
                       </Draggable>
