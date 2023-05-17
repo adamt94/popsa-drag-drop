@@ -1,5 +1,5 @@
 export const useDraggablePreview = ({ src, width, height, borderColor }) => {
-  const previewImage = new Image();
+  const previewImage = document.createElement("img");
   previewImage.src = src;
   previewImage.style.width = `${width}px`;
   previewImage.style.height = `${height}px`;

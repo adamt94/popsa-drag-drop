@@ -13,14 +13,14 @@ describe("swapImagePositions", () => {
 
     const expectedResult = [
       {
-        images: ["image1", "image4", "image3"],
+        images: ["image1", "image2", "image5"],
       },
       {
-        images: ["image2", "image5"],
+        images: ["image4", "image3"],
       },
     ];
 
-    const result = swapImagePositions(data, [0, 1], [1, 0]);
+    const result = swapImagePositions(data, "image5", "image3");
 
     expect(result).toEqual(expectedResult);
   });
