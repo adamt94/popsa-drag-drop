@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { swapImagePositions } from "../../utils/swapImagePositions";
-import DragWrapper from "../DragWrapper/DragWrapper";
-import { useDraggablePreview } from "../DraggablePreview/DraggablePreview";
+import Draggable from "../Draggable/Draggable";
 import { AnimatePresence, motion } from "framer-motion";
 import ActionBar from "../ActionBar/ActionBar";
 
@@ -39,6 +38,7 @@ const PageLayout = styled.div`
   img {
     max-width: 100%;
     height: 100%;
+    transition: opacity 0.5s ease-in-out;
     &.drag-over {
       opacity: 0.5;
     }
@@ -82,6 +82,16 @@ const Circle = styled(motion.div)<{ src: string }>`
   height: 100%;
 `;
 
+const FadeOutImage = styled(motion.div)<{ src: string }>`
+  background: url(${(props) => props.src});
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+`;
+
 export type PrintablePageData = {
   title: string;
   images: string[];
@@ -97,7 +107,7 @@ const circleVariants = {
       type: "spring",
 
       stiffness: 20,
-      restDelta: 40,
+      restDelta: 30,
     },
   }),
   closed: {
@@ -111,6 +121,11 @@ const circleVariants = {
   },
 };
 
+const fadeOutVariant = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.8 } },
+};
+
 export default function PrintablePage({ data }: PrintablePageProps) {
   const [photoBookData, setPhotoBookData] = useState(data);
   const [showDropAnimation, setShowDropAnimation] = useState(false);
@@ -118,8 +133,6 @@ export default function PrintablePage({ data }: PrintablePageProps) {
   const [dest, setDest] = useState<string | null>(null);
 
   const swapImages = (img1: string, img2: string) => {
-    console.log(img1);
-    console.log(img2);
     const updatedPosition = swapImagePositions(photoBookData, img1, img2);
     setPhotoBookData([...updatedPosition]);
   };
@@ -135,11 +148,11 @@ export default function PrintablePage({ data }: PrintablePageProps) {
                 <ActionBar />
               </Header>
               <PageLayout>
-                {entry.images.map((image) => {
+                {entry.images.map((image, j) => {
                   return (
-                    <PrintPhoto key={image}>
-                      <DragWrapper
-                        imagePreview="https://imagedelivery.net/66_qOEcY2UwnECf5ON9PhQ/bde5b129-52ba-4f43-b3f4-97591952ea00/large"
+                    <PrintPhoto key={j}>
+                      <Draggable
+                        draggableItemPreview={image}
                         onDragStart={(element) => {
                           setSrc(element.querySelector("img")?.src || "");
                         }}
@@ -164,10 +177,20 @@ export default function PrintablePage({ data }: PrintablePageProps) {
                             )}
                           </AnimatePresence>
                           <Photo>
-                            <img src={image} alt="" />
+                            <AnimatePresence>
+                              {showDropAnimation && src == image && (
+                                <FadeOutImage
+                                  src={dest || ""}
+                                  variants={fadeOutVariant}
+                                  initial="initial"
+                                  animate="animate"
+                                />
+                              )}
+                            </AnimatePresence>
+                            <img src={image} alt={`photo image ${i + j}`} />
                           </Photo>
                         </>
-                      </DragWrapper>
+                      </Draggable>
                     </PrintPhoto>
                   );
                 })}

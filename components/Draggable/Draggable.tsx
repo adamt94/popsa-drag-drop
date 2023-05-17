@@ -1,30 +1,37 @@
 import React, { DragEventHandler, ReactNode } from "react";
-import { useDraggablePreview } from "../DraggablePreview/DraggablePreview";
+import { DraggablePreview } from "../DraggablePreview/DraggablePreview";
 
-interface DragWrapperProps {
-  imagePreview?: string;
+interface DraggableItemProps {
+  draggableItemPreview?: string;
   onDragStart: (element: HTMLDivElement) => void;
   onDragEnd: (element: HTMLDivElement) => void;
   children: ReactNode;
 }
 
+const addDragClass = (element: HTMLDivElement) => {
+  element.classList.add("drag-over");
+};
+
+const removeDragClasses = (element: HTMLDivElement) => {
+  element.classList.remove("drag-over");
+  element.classList.remove("drag-start");
+};
+
 export default function DragWrapper({
-  imagePreview,
+  draggableItemPreview,
   onDragStart,
   children,
   onDragEnd,
-}: DragWrapperProps) {
+}: DraggableItemProps) {
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>): void => {
-    const dragImage = useDraggablePreview({
-      src: imagePreview,
+    const dragImage = DraggablePreview({
+      src: draggableItemPreview || "",
       width: 100,
       height: 100,
       borderColor: "white",
     });
-    // Using the html d&d api limited to a Image element rather then react component
     event.dataTransfer.setDragImage(dragImage!, 50, 50);
     event.currentTarget.classList.add("drag-start");
-    console.log(event.currentTarget);
     onDragStart(event.currentTarget);
   };
 
@@ -46,34 +53,33 @@ export default function DragWrapper({
   const handleDrop: DragEventHandler<HTMLDivElement> = async (event) => {
     event.preventDefault();
     onDragEnd(event.currentTarget);
-    event.currentTarget.classList.remove("drag-over");
-    event.currentTarget.classList.remove("drag-start");
+    removeDragClasses(event.currentTarget);
   };
 
-  const handleDragEnd = (event: React.DragEvent<HTMLImageElement>) => {
+  const handleDragEndAndRemovePreview = (
+    event: React.DragEvent<HTMLImageElement>
+  ) => {
     event.preventDefault();
-    event.currentTarget.classList.remove("drag-over");
-    event.currentTarget.classList.remove("drag-start");
+    removeDragClasses(event.currentTarget);
+    document.getElementById("drag-preview")?.remove();
   };
 
-  {
-    return (
-      <div className="drag-wrapper">
-        {React.Children.map(children, (child, index) => (
-          <div
-            key={index}
-            draggable
-            onDragEnd={handleDragEnd}
-            onDragStart={handleDragStart}
-            onDragLeave={handleDragLeave}
-            onDragEnter={handleDragEnter}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          >
-            {child}
-          </div>
-        ))}
-      </div>
-    );
-  }
+  const getDragEventHandlers = () => ({
+    onDragEnd: handleDragEndAndRemovePreview,
+    onDragStart: handleDragStart,
+    onDragLeave: handleDragLeave,
+    onDragEnter: handleDragEnter,
+    onDragOver: handleDragOver,
+    onDrop: handleDrop,
+  });
+
+  return (
+    <div className="drag-wrapper">
+      {React.Children.map(children, (child, index) => (
+        <div key={index} draggable {...getDragEventHandlers()}>
+          {child}
+        </div>
+      ))}
+    </div>
+  );
 }
