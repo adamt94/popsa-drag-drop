@@ -12,11 +12,17 @@ npm run dev
 yarn dev
 ```
 
+Run tests
+
+```bash
+yarn test
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Notes
 
-Feel free to modify the source code in anyway that you see fit.
+A implementation of dragging and dropping images
 
 ---
 
