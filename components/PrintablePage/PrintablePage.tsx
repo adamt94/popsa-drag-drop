@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { swapImagePositions } from "../../utils/swapImagePositions";
 import Draggable from "../Draggable/Draggable";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import ActionBar from "../ActionBar/ActionBar";
 import {
   Wrapper,
@@ -14,6 +14,7 @@ import {
   Photo,
   FadeOutImage,
   Placeholder,
+  BorderAnimation,
 } from "./styles";
 
 export type PrintablePageData = {
@@ -29,9 +30,18 @@ const onDropAnimatinVariants = {
     clipPath: `circle(${height * 2 + 200}px at 50% 50%)`,
     transition: {
       type: "spring",
-
       stiffness: 20,
       restDelta: 30,
+      duration: 0.8,
+    },
+  }),
+  openWithDelay: (height = 10) => ({
+    clipPath: `circle(${height * 2 + 200}px at 50% 50%)`,
+    transition: {
+      type: "spring",
+      stiffness: 20,
+      restDelta: 30,
+      delay: 0.01,
     },
   }),
   closed: {
@@ -92,16 +102,29 @@ export default function PrintablePage({ data }: PrintablePageProps) {
                         <>
                           <AnimatePresence>
                             {showDropAnimation && dest == image && (
-                              <OnDropAnimation
-                                src={src || ""}
-                                initial="closed"
-                                animate="open"
-                                variants={onDropAnimatinVariants}
-                                onAnimationComplete={() => {
-                                  setShowDropAnimation(false);
-                                  swapImages(src || "", dest || "");
-                                }}
-                              />
+                              <React.Fragment>
+                                <BorderAnimation
+                                  initial="closed"
+                                  animate="open"
+                                  variants={onDropAnimatinVariants}
+                                />
+                                <OnDropAnimation
+                                  src={src || ""}
+                                  initial="closed"
+                                  animate="openWithDelay"
+                                  variants={onDropAnimatinVariants}
+                                  onAnimationComplete={() => {
+                                    setShowDropAnimation(false);
+                                    swapImages(src || "", dest || "");
+                                  }}
+                                >
+                                  <motion.div
+                                    className="inner"
+                                    variants={onDropAnimatinVariants}
+                                    animate="openWithDelay"
+                                  />
+                                </OnDropAnimation>
+                              </React.Fragment>
                             )}
                           </AnimatePresence>
                           <Photo>
