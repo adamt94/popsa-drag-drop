@@ -8,10 +8,6 @@ interface DraggableItemProps {
   children: ReactNode;
 }
 
-const addDragClass = (element: HTMLDivElement) => {
-  element.classList.add("drag-over");
-};
-
 const removeDragClasses = (element: HTMLDivElement) => {
   element.classList.remove("drag-over");
   element.classList.remove("drag-start");
