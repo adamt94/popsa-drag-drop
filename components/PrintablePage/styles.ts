@@ -36,7 +36,6 @@ export const PageLayout = styled.div`
   padding: 20px;
   margin: 17px 0 42px;
   justify-content: space-between;
-
   img {
     max-width: 100%;
     height: 100%;
@@ -64,6 +63,7 @@ export const PrintPhoto = styled(motion.div)`
 `;
 export const Photo = styled.div`
   img {
+    cursor: grab;
     max-width: 100%;
     height: 100%;
     &.drag-over {
